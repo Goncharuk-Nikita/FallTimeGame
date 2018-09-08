@@ -9,13 +9,21 @@
       <e p="Assets" t="Include">
         <e p="_CompleteGame" t="Include">
           <e p="Scripts" t="Include">
+            <e p="DiInstallers" t="Include">
+              <e p="GameInstaller.cs" t="Include" />
+            </e>
+            <e p="Poolable" t="Include">
+              <e p="IPoolableComponent.cs" t="Include" />
+              <e p="PoolablePrefabData.cs" t="Include" />
+              <e p="Prefab.cs" t="Include" />
+              <e p="PrefabPool.cs" t="Include" />
+              <e p="PrefabPoolingSystem.cs" t="Include" />
+            </e>
             <e p="Rope" t="Include">
               <e p="Rope.cs" t="Include" />
+              <e p="RopeSegment.cs" t="Include" />
             </e>
           </e>
-        </e>
-        <e p="Graphics" t="Include">
-          <e p="readme.txt" t="Include" />
         </e>
         <e p="Plugins" t="Include">
           <e p="Demigiant" t="Include">
@@ -30,6 +38,16 @@
                 <e p="DOTweenModuleUtils.cs" t="Include" />
               </e>
               <e p="readme.txt" t="Include" />
+            </e>
+          </e>
+          <e p="EZ Object Pools" t="Include">
+            <e p="Scripts" t="Include">
+              <e p="EZObjectPool.cs" t="Include" />
+              <e p="PooledObjects" t="Include">
+                <e p="ParticleSystemDisable.cs" t="Include" />
+                <e p="PooledObject.cs" t="Include" />
+                <e p="TimedDisable.cs" t="Include" />
+              </e>
             </e>
           </e>
           <e p="GitHub" t="Include">

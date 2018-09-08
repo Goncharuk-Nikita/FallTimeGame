@@ -1,172 +1,227 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
-[RequireComponent(typeof(LineRenderer))]
+[RequireComponent(typeof(LineRenderer)),
+RequireComponent(typeof(Rigidbody2D))]
 public class Rope : MonoBehaviour
 {
-	[SerializeField] private GameObject ropeSegment;
+	public const int BaseDrawSegmentsCount = 2;
+	public const float LegJointDistance = 0.1f;
 	
-	List<GameObject> ropeSegments = new List<GameObject>();
 	
-	public bool isIncreasing { get; set; }
-	public bool isDecreasing { get; set; }
+	[SerializeField] private Prefab ropeSegmentPrefab;
 
-	public Rigidbody2D connectedObject;
+	[Header("Settings")]
+	public GameObject connectedObject;
 
 	public float maxRopeSegmentLength = 1.0f;
 	public float ropeSpeed = 4.0f;
+	
+	
+	public bool isIncreasing { get; set; }
+	public bool isDecreasing { get; set; }
+	
+	private List<RopeSegment> _ropeSegments = new List<RopeSegment>();
 
-	private LineRenderer lineRenderer;
+	private Rigidbody2D _body;
+	private LineRenderer _lineRenderer;
+
+	private Rigidbody2D _connectedBody;
+	private SpringJoint2D _connectedSpringJoint;
+
 	
 
 #if UNITY_EDITOR
 	private void OnValidate()
 	{
-		lineRenderer = GetComponent<LineRenderer>();
-		if (lineRenderer == null)
+		_lineRenderer = GetComponent<LineRenderer>();
+		if (_lineRenderer == null)
 		{
 			Debug.LogError("LineRenderer component not found!", this);
 		}
+
+		_body = GetComponent<Rigidbody2D>();
+		if (_body == null)
+		{
+			Debug.LogError("Rigidbody2D component not found!", this);
+		}
+
+		if (connectedObject == null)
+		{
+			Debug.LogWarning("Need to set connected object");
+			return;
+		}
+		
+		_connectedBody = connectedObject.GetComponent<Rigidbody2D>();
+		if (_connectedBody == null)
+		{
+			Debug.LogError("Rigidbody2D component not found!", this);
+		}
+		
+		_connectedSpringJoint = connectedObject.GetComponent<SpringJoint2D>();
+		if (_connectedSpringJoint == null)
+		{
+			Debug.LogError("Rigidbody2D component not found!", this);
+		}
 	}
 #endif
-	
+
+
+	private void Awake()
+	{
+		ropeSegmentPrefab.Install();
+	}
 	
 	private void Start() 
 	{
 		ResetLength();
 	}
 	
-	private void Update() {
-		
-		GameObject topSegment = ropeSegments[0];
-		SpringJoint2D topSegmentJoint =
-			topSegment.GetComponent<SpringJoint2D>();
-		
-		if (isIncreasing) 
-		{
-			if (topSegmentJoint.distance >=
-			    maxRopeSegmentLength) 
-			{
-				CreateRopeSegment();
-			} else 
-			{
-				topSegmentJoint.distance += ropeSpeed *
-				                            Time.deltaTime;
-			}
-		}
-		if (isDecreasing) {
-			if (topSegmentJoint.distance <= 0.005f) 
-			{
-				RemoveRopeSegment();
-			} else 
-			{
-				topSegmentJoint.distance -= ropeSpeed *
-				                            Time.deltaTime;
-			}
-		}
-		
-		if (lineRenderer != null) 
-		{
-			lineRenderer.positionCount
-				= ropeSegments.Count + 2;
-			
-			lineRenderer.SetPosition(0,
-				this.transform.position);
-			
-			for (int i = 0; i < ropeSegments.Count; i++) 
-			{
-				lineRenderer.SetPosition(i+1,
-					ropeSegments[i].transform.position);
-			}
-			
-			SpringJoint2D connectedObjectJoint =
-				connectedObject.GetComponent<SpringJoint2D>();
-			
-			lineRenderer.SetPosition(
-				ropeSegments.Count + 1,
-				connectedObject.transform.TransformPoint(connectedObjectJoint.anchor)
-			);
-		}
-	}
 	
-	
-	
-	public void ResetLength() 
+	private void Update() 
 	{
-		foreach (var segment in ropeSegments) 
+		if (isIncreasing)
 		{
-			Destroy(segment);
+			IncreaseRope();
 		}
-		ropeSegments = new List<GameObject>();
-		
-		isDecreasing = isIncreasing = false;
-		CreateRopeSegment();
-	}
-
-	private void CreateRopeSegment() 
-	{
-		GameObject segment = Instantiate(
-			ropeSegment,
-			this.transform.position,
-			Quaternion.identity);
+		else if (isDecreasing)
+		{
+			DecreaseRope();
+		}
 		
 
-		segment.transform.SetParent(this.transform, true);
+		RenderLine();
+	}
+
+	
+	private void IncreaseRope()
+	{	
+		var firstSegmentSpringJoint = _ropeSegments[0].springJoint;
 		
-		Rigidbody2D segmentBody = segment
-			.GetComponent<Rigidbody2D>();
-		SpringJoint2D segmentJoint =
-			segment.GetComponent<SpringJoint2D>();
-		
-		if (segmentBody == null || segmentJoint == null) {
-			Debug.LogError("Rope segment body prefab has no " +
-			               "Rigidbody2D and/or SpringJoint2D!");
-			return;
-		}
-		
-		ropeSegments.Insert(0, segment);
-		
-		if (ropeSegments.Count == 1) 
+		if (firstSegmentSpringJoint.distance >= maxRopeSegmentLength) 
 		{
-		
-			SpringJoint2D connectedObjectJoint =
-				connectedObject.GetComponent<SpringJoint2D>();
-			connectedObjectJoint.connectedBody
-				= segmentBody;
-			connectedObjectJoint.distance = 0.1f;
-			
-			segmentJoint.distance = maxRopeSegmentLength;
+			CreateRopeSegment();
 		} 
 		else 
 		{
-			GameObject nextSegment = ropeSegments[1];
-			SpringJoint2D nextSegmentJoint =
-				nextSegment.GetComponent<SpringJoint2D>();
-			nextSegmentJoint.connectedBody = segmentBody;
-			
-			segmentJoint.distance = 0.0f;
+			firstSegmentSpringJoint.distance += 
+				ropeSpeed * Time.deltaTime;
 		}
-
-		segmentJoint.connectedBody = GetComponent<Rigidbody2D>();
 	}
 	
+	private void DecreaseRope()
+	{	
+		var firstSegmentSpringJoint = _ropeSegments[0].springJoint;
+		
+		if (firstSegmentSpringJoint.distance <= 0.005f) 
+		{
+			RemoveRopeSegment();
+		} 
+		else 
+		{
+			firstSegmentSpringJoint.distance -= 
+				ropeSpeed * Time.deltaTime;
+		}
+	}
+	
+	private void RenderLine()
+	{
+		_lineRenderer.positionCount = _ropeSegments.Count + BaseDrawSegmentsCount;
+			
+		_lineRenderer.SetPosition(0,
+			this.transform.position);
+			
+		for (int i = 0; i < _ropeSegments.Count; i++) 
+		{
+			_lineRenderer.SetPosition(i + 1,
+				_ropeSegments[i].transform.position);
+		}
+			
+		_lineRenderer.SetPosition(
+			_ropeSegments.Count + 1,
+			connectedObject.transform.TransformPoint(_connectedSpringJoint.anchor)
+		);
+	}
+	
+
+
+	public void ResetLength() 
+	{
+		foreach (var segment in _ropeSegments)
+		{
+			PrefabPoolingSystem.Despawn(segment.gameObject);
+		}
+		
+		_ropeSegments.Clear();
+		
+		isDecreasing = isIncreasing = false;
+		InitializeRope();
+	}
+
+	private void InitializeRope()
+	{
+		var ropeSegment = SpawnRopeSegment();
+		
+		_connectedSpringJoint.connectedBody
+			= ropeSegment.body;
+		_connectedSpringJoint.distance = LegJointDistance;
+
+		ropeSegment.SetSpringDistance(maxRopeSegmentLength);
+		ropeSegment.SetConnectedBody(_body);
+		
+		AddFirst(ropeSegment);
+	}
+
+	
+	private void CreateRopeSegment()
+	{
+		var ropeSegment = SpawnRopeSegment();
+		
+		PushSegment(ropeSegment);
+	}
+
+	private RopeSegment SpawnRopeSegment()
+	{
+		var prefabData = ropeSegmentPrefab.Spawn(
+			this.transform.position);
+
+		return (RopeSegment) prefabData.poolableComponent;
+	}
+	
+	private void PushSegment(RopeSegment ropeSegment)
+	{
+		var firstSegment = _ropeSegments[0];
+
+		firstSegment.SetConnectedBody(ropeSegment.body);
+		ropeSegment.SetConnectedBody(_body);
+
+		AddFirst(ropeSegment);
+	}
+
+	private void AddFirst(RopeSegment ropeSegment)
+	{
+		_ropeSegments.Insert(0, ropeSegment);
+	}
+
+
 	private void RemoveRopeSegment() {
 		
-		if (ropeSegments.Count < 2) 
+		if (_ropeSegments.Count < 2) 
 		{
 			return;
 		}
 		
-		GameObject topSegment = ropeSegments[0];
-		GameObject nextSegment = ropeSegments[1];
+		var firstSegment = _ropeSegments[0];
+		var secondSegment = _ropeSegments[1];
 		
-		SpringJoint2D nextSegmentJoint = nextSegment.GetComponent<SpringJoint2D>();
-		nextSegmentJoint.connectedBody = this.GetComponent<Rigidbody2D>();
+		secondSegment.SetConnectedBody(_body);
 		
-		ropeSegments.RemoveAt(0);
-		Destroy (topSegment);
+		DestroySegment(firstSegment);
 	}
-	
-	
+
+	private void DestroySegment(RopeSegment ropeSegment)
+	{
+		_ropeSegments.Remove(ropeSegment);
+		PrefabPoolingSystem.Despawn(ropeSegment.gameObject);
+	}
 }
