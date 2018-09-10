@@ -15,15 +15,11 @@ public class GameSettingsInstaller : ScriptableObjectInstaller
 		[Header("Player States:")]
 		public WaitingState.Settings StateWaiting;
 		public MovingState.Settings StateMoving;
-		
-		[Header("Other:")]
-		public BodyPart.Settings BodyParts;
 	}
 
 	public override void InstallBindings()
 	{
 		Container.BindInstance(Player.StateWaiting);
 		Container.BindInstance(Player.StateMoving);
-		Container.BindInstance(Player.BodyParts);
 	}
 }

@@ -3,12 +3,24 @@ using Zenject;
 
 public class WaitingState : PlayerState
 {
-	
-	public override void Init()
-	{ }
+	private PlayerMotor _motor;
+
+	public override void Init(PlayerMotor motor)
+	{
+		_motor = motor;
+		
+		_motor.body
+			.Sleep();
+	}
 
 	public override void FixedUpdate()
 	{ }
+
+	public override void Dispose()
+	{
+		_motor.body
+			.WakeUp();
+	}
 
 
 	[Serializable]

@@ -44,6 +44,9 @@ TagManager:
   - name: Playables
     uniqueID: 1178643273
     locked: 0
+  - name: Particles
+    uniqueID: 2685105661
+    locked: 0
   - name: UI
     uniqueID: 1352915545
     locked: 0

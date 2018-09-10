@@ -4,24 +4,25 @@ using Zenject;
 
 public class MovingState : PlayerState 
 {
-	private readonly PlayerMotor _motor;
+	private PlayerMotor _motor;
+	private Rigidbody2D _body;
+	
 	private readonly Settings _settings;
 
-	private readonly Rigidbody2D _body;
 	
 	
-	public MovingState(PlayerMotor motor, Settings settings)
+	public MovingState(Settings settings)
+	{
+		_settings = settings;
+	}
+
+	public override void Init(PlayerMotor motor)
 	{
 		_motor = motor;
-		_settings = settings;
-
-		_body = motor.playerBody;
+		_body = motor.body;
 	}
-	
-	
-	public override void Init () 
-	{ }
 
+	
 	public override void FixedUpdate()
 	{
 		Swing();

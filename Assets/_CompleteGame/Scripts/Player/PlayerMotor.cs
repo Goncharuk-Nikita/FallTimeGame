@@ -8,22 +8,15 @@ public abstract class PlayerMotor : MonoBehaviour
 {		
 	public float SidewaysMotion { get; set; }
 
-	public Rigidbody2D playerBody { get; private set; }
+	public Rigidbody2D body { get; private set; }
 	
-	[Inject] private PlayerStateFactory _stateFactory;
 	private PlayerState _currentState;
 
 	
-#if UNITY_EDITOR
-	protected virtual void OnValidate()
+	protected virtual void Awake()
 	{
-		playerBody = GetComponent<Rigidbody2D>();
-		if (playerBody == null)
-		{
-			Debug.LogError("PlayerMotor.RigidBody2D component not found", this);
-		}
+		body = GetComponent<Rigidbody2D>();
 	}
-#endif
 
 
 	protected virtual void Start()
@@ -34,7 +27,7 @@ public abstract class PlayerMotor : MonoBehaviour
 	}
 	
 	
-	public void ChangeState(PlayerStates state)
+	public void ChangeState(PlayerState state)
 	{
 		if (_currentState != null)
 		{
@@ -42,7 +35,7 @@ public abstract class PlayerMotor : MonoBehaviour
 			_currentState = null;
 		}
 
-		_currentState = _stateFactory.CreateState(state);
-		_currentState.Init();
+		_currentState = state;
+		_currentState.Init(this);
 	}
 }

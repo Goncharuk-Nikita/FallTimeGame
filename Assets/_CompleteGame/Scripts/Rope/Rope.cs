@@ -1,4 +1,6 @@
 ﻿using System.Collections.Generic;
+using UniRx;
+using UniRx.Triggers;
 using UnityEngine;
 
 [RequireComponent(typeof(LineRenderer)),
@@ -11,22 +13,21 @@ public class Rope : MonoBehaviour
 	
 	[SerializeField] private Prefab ropeSegmentPrefab;
 
-	[Header("Settings")]
-	public GameObject connectedObject;
-
 	public float maxRopeSegmentLength = 1.0f;
 	public float ropeSpeed = 4.0f;
-	
+
 	
 	public bool isIncreasing { get; set; }
 	public bool isDecreasing { get; set; }
+
+	
+	private GameObject _connectedObject;
 	
 	private List<RopeSegment> _ropeSegments = new List<RopeSegment>();
 
 	private Rigidbody2D _body;
 	private LineRenderer _lineRenderer;
 
-	private Rigidbody2D _connectedBody;
 	private SpringJoint2D _connectedSpringJoint;
 
 	
@@ -45,24 +46,6 @@ public class Rope : MonoBehaviour
 		{
 			Debug.LogError("Rigidbody2D component not found!", this);
 		}
-
-		if (connectedObject == null)
-		{
-			Debug.LogWarning("Need to set connected object");
-			return;
-		}
-		
-		_connectedBody = connectedObject.GetComponent<Rigidbody2D>();
-		if (_connectedBody == null)
-		{
-			Debug.LogError("Rigidbody2D component not found!", this);
-		}
-		
-		_connectedSpringJoint = connectedObject.GetComponent<SpringJoint2D>();
-		if (_connectedSpringJoint == null)
-		{
-			Debug.LogError("Rigidbody2D component not found!", this);
-		}
 	}
 #endif
 
@@ -70,15 +53,14 @@ public class Rope : MonoBehaviour
 	private void Awake()
 	{
 		ropeSegmentPrefab.Install();
+
+		this.UpdateAsObservable()
+			.Where((unit, i) => _connectedObject != null)
+			.Subscribe(unit => UpdateRope());
 	}
+
 	
-	private void Start() 
-	{
-		ResetLength();
-	}
-	
-	
-	private void Update() 
+	private void UpdateRope() 
 	{
 		if (isIncreasing)
 		{
@@ -88,7 +70,6 @@ public class Rope : MonoBehaviour
 		{
 			DecreaseRope();
 		}
-		
 
 		RenderLine();
 	}
@@ -139,11 +120,18 @@ public class Rope : MonoBehaviour
 			
 		_lineRenderer.SetPosition(
 			_ropeSegments.Count + 1,
-			connectedObject.transform.TransformPoint(_connectedSpringJoint.anchor)
+			_connectedObject.transform.TransformPoint(_connectedSpringJoint.anchor)
 		);
 	}
 	
 
+	public void SetConnectedObject(GameObject go)
+	{
+		_connectedObject = go;
+		
+		_connectedSpringJoint = _connectedObject.GetComponent<SpringJoint2D>();
+	}
+	
 
 	public void ResetLength() 
 	{

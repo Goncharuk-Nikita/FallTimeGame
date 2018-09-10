@@ -4,10 +4,10 @@ using Zenject;
 
 public class Player : PlayerMotor
 {
-	public static event Action<int> OnHealthChanged = 
-		health => { }; 
-	
-	[SerializeField] private GameObject treasure;
+	public static event Action<int> HealthChanged = 
+		health => { };
+
+	public GameObject footRope;
 	
 	private bool _alive = true;
 	public bool Alive
@@ -19,19 +19,15 @@ public class Player : PlayerMotor
 	public bool HoldingTreasure { get; private set; }
 
 	
-	[Inject] private Settings _settings;
-	
 	private BodyPart[] _bodyParts;
 	
 	
-#if UNITY_EDITOR
-	protected override void OnValidate()
+	protected override void Awake()
 	{
-		base.OnValidate();
+		base.Awake();
 
-		_bodyParts = GetComponents<BodyPart>();
+		_bodyParts = GetComponentsInChildren<BodyPart>();
 	}
-#endif
 
 	
 	private void OnEnable()
@@ -51,26 +47,24 @@ public class Player : PlayerMotor
 	}
 
 	
-	private void PlayerDamaged()
+	private void PlayerDamaged(DamageInfo damageInfo)
 	{
 		
 	}
 
 
-	private void DestroyGnome()
+	public void DestroyPlayer()
 	{
 		Alive = HoldingTreasure = false;
 
-		foreach (BodyPart part in _bodyParts)
+		foreach (var part in _bodyParts)
 		{
 			part.Detach();
 		}
 	}
-	
-	
-	[Serializable]
-	public class Settings
+
+	private static void OnHealthChanged(int currentHealth)
 	{
-		public int startHealth = 3;
+		HealthChanged(currentHealth);
 	}
 }

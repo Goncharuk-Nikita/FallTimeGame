@@ -9,15 +9,25 @@
       <e p="Assets" t="Include">
         <e p="_CompleteGame" t="Include">
           <e p="Scripts" t="Include">
-            <e p="Controllers" t="Include">
-              <e p="GameController.cs" t="Include" />
+            <e p="Camera" t="Include">
+              <e p="FollowCamera2D.cs" t="Include" />
             </e>
             <e p="Damage" t="Include">
+              <e p="Damageble.cs" t="Include" />
+              <e p="DamageInfo.cs" t="Include" />
               <e p="DamageType.cs" t="Include" />
             </e>
             <e p="DiInstallers" t="Include">
               <e p="GameInstaller.cs" t="Include" />
               <e p="GameSettingsInstaller.cs" t="Include" />
+            </e>
+            <e p="Enemies" t="Include">
+              <e p="Enemy.cs" t="Include" />
+              <e p="Spike.cs" t="Include" />
+            </e>
+            <e p="Managers" t="Include">
+              <e p="GameManager.cs" t="Include" />
+              <e p="UiManager.cs" t="Include" />
             </e>
             <e p="Player" t="Include">
               <e p="Body" t="Include">
@@ -43,6 +53,11 @@
             <e p="Rope" t="Include">
               <e p="Rope.cs" t="Include" />
               <e p="RopeSegment.cs" t="Include" />
+            </e>
+            <e p="UI" t="Include">
+              <e p="Popups" t="Include">
+                <e p="PausePopup.cs" t="Include" />
+              </e>
             </e>
           </e>
         </e>
