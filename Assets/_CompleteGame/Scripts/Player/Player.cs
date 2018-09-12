@@ -4,16 +4,43 @@ using Zenject;
 
 public class Player : PlayerMotor
 {
-	public static event Action<int> HealthChanged = 
+	public static event Action<float> HealthChanged = 
 		health => { };
+	
+	public static event Action PlayerDied =
+		() => { };
+
+
+	public int maxHealth = 100;
+	
 
 	public GameObject footRope;
 	
-	private bool _alive = true;
-	public bool Alive
+	private bool _isAlive = true;
+	public bool IsAlive
 	{
-		get { return _alive; }
-		set { _alive = value; }
+		get { return _isAlive; }
+		set
+		{
+			_isAlive = value; 
+			
+		}
+	}
+
+	private int _playerHealth;
+	public int PlayerHealth
+	{
+		get { return _playerHealth; }
+		set
+		{
+			if (value == _playerHealth)
+			{
+				return;
+			}
+
+			_playerHealth = value;
+			OnHealthChanged((float)_playerHealth / maxHealth);
+		}
 	}
 
 	public bool HoldingTreasure { get; private set; }
@@ -26,6 +53,7 @@ public class Player : PlayerMotor
 	{
 		base.Awake();
 
+		_playerHealth = maxHealth;
 		_bodyParts = GetComponentsInChildren<BodyPart>();
 	}
 
@@ -49,13 +77,19 @@ public class Player : PlayerMotor
 	
 	private void PlayerDamaged(DamageInfo damageInfo)
 	{
-		
+		PlayerHealth -= damageInfo.damage;
+
+		if (PlayerHealth <= 0)
+		{
+			IsAlive = false;
+			OnPlayerDied();
+		}
 	}
 
 
 	public void DestroyPlayer()
 	{
-		Alive = HoldingTreasure = false;
+		IsAlive = HoldingTreasure = false;
 
 		foreach (var part in _bodyParts)
 		{
@@ -63,8 +97,13 @@ public class Player : PlayerMotor
 		}
 	}
 
-	private static void OnHealthChanged(int currentHealth)
+	private static void OnHealthChanged(float currentHealth)
 	{
 		HealthChanged(currentHealth);
+	}
+
+	private static void OnPlayerDied()
+	{
+		PlayerDied();	
 	}
 }

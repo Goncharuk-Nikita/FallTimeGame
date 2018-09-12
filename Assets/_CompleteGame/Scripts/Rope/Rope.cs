@@ -13,8 +13,13 @@ public class Rope : MonoBehaviour
 	
 	[SerializeField] private Prefab ropeSegmentPrefab;
 
+	[Header("Rope Settings:")]
 	public float maxRopeSegmentLength = 1.0f;
 	public float ropeSpeed = 4.0f;
+	
+	[Space]
+	[SerializeField] private GameObject endOfRope;
+	
 
 	
 	public bool isIncreasing { get; set; }
@@ -117,7 +122,7 @@ public class Rope : MonoBehaviour
 			_lineRenderer.SetPosition(i + 1,
 				_ropeSegments[i].transform.position);
 		}
-			
+
 		_lineRenderer.SetPosition(
 			_ropeSegments.Count + 1,
 			_connectedObject.transform.TransformPoint(_connectedSpringJoint.anchor)
@@ -127,9 +132,19 @@ public class Rope : MonoBehaviour
 
 	public void SetConnectedObject(GameObject go)
 	{
+		endOfRope.SetActive(false);
 		_connectedObject = go;
 		
 		_connectedSpringJoint = _connectedObject.GetComponent<SpringJoint2D>();
+	}
+	
+	public void CutRope()
+	{
+		endOfRope.transform.position = _connectedObject.transform.position;
+		_connectedObject = endOfRope;
+		
+		_connectedSpringJoint = endOfRope.GetComponent<SpringJoint2D>();
+		endOfRope.SetActive(true);
 	}
 	
 

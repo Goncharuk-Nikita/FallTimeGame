@@ -25,6 +25,9 @@
               <e p="Enemy.cs" t="Include" />
               <e p="Spike.cs" t="Include" />
             </e>
+            <e p="Health" t="Include">
+              <e p="HealthBar.cs" t="Include" />
+            </e>
             <e p="Managers" t="Include">
               <e p="GameManager.cs" t="Include" />
               <e p="UiManager.cs" t="Include" />

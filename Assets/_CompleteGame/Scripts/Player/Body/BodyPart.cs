@@ -23,20 +23,14 @@ public class BodyPart : Damageble
 	private Collider2D[]  _colliders;
 	
 
-#if UNITY_EDITOR
-	private void OnValidate()
-	{
-		_joints = GetComponentsInChildren<Joint2D>();
-		_bodies = GetComponentsInChildren<Rigidbody2D>();
-		_colliders = GetComponentsInChildren<Collider2D>();
-	}
-#endif
-	
-
 	private void Start()
 	{
 		_sprite = GetComponent<SpriteRenderer>();
 		_body = GetComponent<Rigidbody2D>();
+		
+		_joints = GetComponentsInChildren<Joint2D>();
+		_bodies = GetComponentsInChildren<Rigidbody2D>();
+		_colliders = GetComponentsInChildren<Collider2D>();
 		
 		this.UpdateAsObservable()
 			.Where((unit, i) => _detached && _body.IsSleeping())

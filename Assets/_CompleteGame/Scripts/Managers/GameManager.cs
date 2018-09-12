@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Collections;
+using DG.Tweening;
+using UniRx;
 using UnityEngine;
 using Zenject;
 
@@ -12,6 +15,9 @@ public class GameManager : MonoBehaviour
     [Header("Player Settings")]
     [SerializeField] private GameObject playerPrefab;
     [SerializeField] private Vector3 startPlayerRotation = new Vector3(0, 0, 180);
+    
+    [Header("Game Settings:")]
+    [SerializeField] private float showEndGamePopupDelay = 2f;
     
     public bool IsGame { get; private set; }
 
@@ -38,6 +44,15 @@ public class GameManager : MonoBehaviour
     }
 
 
+    private void Start()
+    {
+        Player.HealthChanged += health => 
+            _uiManager.HealthBar.SetHealth(health);
+
+        Player.PlayerDied += EndGame;
+    }
+
+    
 
     public void StartGame()
     {
@@ -47,7 +62,7 @@ public class GameManager : MonoBehaviour
         ChangePlayerState(PlayerStates.Moving);
     }
 
-
+    
     private void ResetGame()
     {
         CreatePlayer();
@@ -91,10 +106,17 @@ public class GameManager : MonoBehaviour
 
     public void EndGame()
     {
-        
+        RemoveCurrentPlayer();
+        _rope.CutRope();
+
+        MakeAfterDelay(showEndGamePopupDelay, () =>
+        {
+            _uiManager.EndGamePopup.Show();
+        });
     }
 
 
+    
     public void ChangePlayerState(PlayerStates state)
     {
         if (_player == null)
@@ -133,8 +155,24 @@ public class GameManager : MonoBehaviour
         _uiManager.PausePopup
             .Resume();
     }
-    
-    
+
+
+    public void MakeAfterDelay(float delay, Action action)
+    {
+        StartCoroutine(Delay(delay, action));
+    }
+
+    private IEnumerator Delay(float delay, Action action)
+    {
+        float elapsedTime = 0.0f;
+        while (elapsedTime < delay)
+        {
+            yield return null;
+            elapsedTime += Time.deltaTime;
+        }
+
+        action();
+    }
     
     
     private static void OnGameReset()

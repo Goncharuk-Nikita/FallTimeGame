@@ -84,7 +84,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   damageType: 1
-  damage: 1
+  damage: 50
+  damageDelay: 1
 --- !u!212 &212439783851783952
 SpriteRenderer:
   m_ObjectHideFlags: 1
