@@ -812,6 +812,11 @@ CanvasRenderer:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 184635109}
   m_CullTransparentMesh: 0
+--- !u!4 &199776517 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 4501556209124078, guid: c9fbebb3e6866174f95509518ba56df0,
+    type: 2}
+  m_PrefabInternal: {fileID: 1677073527}
 --- !u!1 &218909024
 GameObject:
   m_ObjectHideFlags: 0
@@ -1139,6 +1144,8 @@ Transform:
   - {fileID: 873258001}
   - {fileID: 53709564}
   - {fileID: 931485706}
+  - {fileID: 970878746}
+  - {fileID: 199776517}
   m_Father: {fileID: 0}
   m_RootOrder: 10
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -6801,6 +6808,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ac0b09e7857660247b1477e93731de29, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!4 &970878746 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 4501556209124078, guid: c9fbebb3e6866174f95509518ba56df0,
+    type: 2}
+  m_PrefabInternal: {fileID: 1198841018}
 --- !u!1 &983244259
 GameObject:
   m_ObjectHideFlags: 0
@@ -7694,6 +7706,52 @@ CanvasRenderer:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1179653088}
   m_CullTransparentMesh: 0
+--- !u!1001 &1198841018
+Prefab:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 328384263}
+    m_Modifications:
+    - target: {fileID: 4501556209124078, guid: c9fbebb3e6866174f95509518ba56df0, type: 2}
+      propertyPath: m_LocalPosition.x
+      value: -3
+      objectReference: {fileID: 0}
+    - target: {fileID: 4501556209124078, guid: c9fbebb3e6866174f95509518ba56df0, type: 2}
+      propertyPath: m_LocalPosition.y
+      value: -22
+      objectReference: {fileID: 0}
+    - target: {fileID: 4501556209124078, guid: c9fbebb3e6866174f95509518ba56df0, type: 2}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4501556209124078, guid: c9fbebb3e6866174f95509518ba56df0, type: 2}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4501556209124078, guid: c9fbebb3e6866174f95509518ba56df0, type: 2}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4501556209124078, guid: c9fbebb3e6866174f95509518ba56df0, type: 2}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4501556209124078, guid: c9fbebb3e6866174f95509518ba56df0, type: 2}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4501556209124078, guid: c9fbebb3e6866174f95509518ba56df0, type: 2}
+      propertyPath: m_RootOrder
+      value: 22
+      objectReference: {fileID: 0}
+    - target: {fileID: 1834867095934568, guid: c9fbebb3e6866174f95509518ba56df0, type: 2}
+      propertyPath: m_Name
+      value: FlameTower (1)
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: c9fbebb3e6866174f95509518ba56df0, type: 2}
+  m_IsPrefabAsset: 0
 --- !u!1001 &1260994687
 Prefab:
   m_ObjectHideFlags: 0
@@ -13974,6 +14032,56 @@ Prefab:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: b05130e80497b78439e6618771d60395, type: 2}
+  m_IsPrefabAsset: 0
+--- !u!1001 &1677073527
+Prefab:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 328384263}
+    m_Modifications:
+    - target: {fileID: 4501556209124078, guid: c9fbebb3e6866174f95509518ba56df0, type: 2}
+      propertyPath: m_LocalPosition.x
+      value: 2.95
+      objectReference: {fileID: 0}
+    - target: {fileID: 4501556209124078, guid: c9fbebb3e6866174f95509518ba56df0, type: 2}
+      propertyPath: m_LocalPosition.y
+      value: -29.3
+      objectReference: {fileID: 0}
+    - target: {fileID: 4501556209124078, guid: c9fbebb3e6866174f95509518ba56df0, type: 2}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4501556209124078, guid: c9fbebb3e6866174f95509518ba56df0, type: 2}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4501556209124078, guid: c9fbebb3e6866174f95509518ba56df0, type: 2}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4501556209124078, guid: c9fbebb3e6866174f95509518ba56df0, type: 2}
+      propertyPath: m_LocalRotation.z
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4501556209124078, guid: c9fbebb3e6866174f95509518ba56df0, type: 2}
+      propertyPath: m_LocalRotation.w
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4501556209124078, guid: c9fbebb3e6866174f95509518ba56df0, type: 2}
+      propertyPath: m_RootOrder
+      value: 23
+      objectReference: {fileID: 0}
+    - target: {fileID: 1834867095934568, guid: c9fbebb3e6866174f95509518ba56df0, type: 2}
+      propertyPath: m_Name
+      value: FlameTower (2)
+      objectReference: {fileID: 0}
+    - target: {fileID: 4501556209124078, guid: c9fbebb3e6866174f95509518ba56df0, type: 2}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 180
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: c9fbebb3e6866174f95509518ba56df0, type: 2}
   m_IsPrefabAsset: 0
 --- !u!1 &1694634290
 GameObject:
