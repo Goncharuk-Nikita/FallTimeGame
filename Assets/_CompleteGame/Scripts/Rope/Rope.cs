@@ -116,7 +116,7 @@ public class Rope : MonoBehaviour
 		_lineRenderer.positionCount = _ropeSegments.Count + BaseDrawSegmentsCount;
 
 		_lineRenderer.SetPosition(0,
-			this.transform.position + renderOffset);
+			this.transform.position);
 			
 		for (int i = 0; i < _ropeSegments.Count; i++) 
 		{
@@ -126,7 +126,7 @@ public class Rope : MonoBehaviour
 
 		_lineRenderer.SetPosition(
 			_ropeSegments.Count + 1,
-			_connectedObject.transform.TransformPoint(_connectedSpringJoint.anchor)  + renderOffset
+			_connectedObject.transform.TransformPoint(_connectedSpringJoint.anchor)
 		);
 	}
 	

@@ -16,6 +16,8 @@ public class Player : PlayerMotor
 
 	public GameObject footRope;
 	
+	[SerializeField] private BodyPart[] bodyParts;
+	
 	private bool _isAlive = true;
 	public bool IsAlive
 	{
@@ -46,7 +48,6 @@ public class Player : PlayerMotor
 	public bool holdingTreasure { get; set; }
 
 	
-	private BodyPart[] _bodyParts;
 	
 	
 	protected override void Awake()
@@ -54,13 +55,13 @@ public class Player : PlayerMotor
 		base.Awake();
 
 		_playerHealth = maxHealth;
-		_bodyParts = GetComponentsInChildren<BodyPart>();
+		
 	}
 
 	
 	private void OnEnable()
 	{
-		foreach (var bodyPart in _bodyParts)
+		foreach (var bodyPart in bodyParts)
 		{
 			bodyPart.Damaged += PlayerDamaged;
 		}
@@ -68,7 +69,7 @@ public class Player : PlayerMotor
 
 	private void OnDisable()
 	{
-		foreach (var bodyPart in _bodyParts)
+		foreach (var bodyPart in bodyParts)
 		{
 			bodyPart.Damaged -= PlayerDamaged;
 		}
@@ -91,9 +92,9 @@ public class Player : PlayerMotor
 	{
 		IsAlive = holdingTreasure = false;
 
-		foreach (var part in _bodyParts)
+		for (int i = 0; i < bodyParts.Length; i++)
 		{
-			part.Detach();
+			bodyParts[i].Detach();
 		}
 	}
 

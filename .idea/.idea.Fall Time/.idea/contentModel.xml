@@ -23,6 +23,9 @@
             </e>
             <e p="Enemies" t="Include">
               <e p="Enemy.cs" t="Include" />
+              <e p="Fireball.cs" t="Include" />
+              <e p="FlameTower.cs" t="Include" />
+              <e p="Saw.cs" t="Include" />
               <e p="Spike.cs" t="Include" />
             </e>
             <e p="Health" t="Include">
@@ -30,6 +33,7 @@
             </e>
             <e p="Managers" t="Include">
               <e p="GameManager.cs" t="Include" />
+              <e p="PrefabManager.cs" t="Include" />
               <e p="SpawnManager.cs" t="Include" />
               <e p="UiManager.cs" t="Include" />
             </e>

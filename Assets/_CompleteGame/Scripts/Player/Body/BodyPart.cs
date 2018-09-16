@@ -44,9 +44,9 @@ public class BodyPart : Damageble
 		transform.SetParent(null, true);
 		
 		// Destroy joints to fall independently
-		foreach (var joint in _joints) 
+		foreach (var joint in _joints)
 		{
-			Destroy (joint);
+			joint.enabled = false;
 		}
 	}
 	
