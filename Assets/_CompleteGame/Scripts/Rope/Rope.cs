@@ -2,6 +2,7 @@
 using UniRx;
 using UniRx.Triggers;
 using UnityEngine;
+using UnityEngine.Tilemaps;
 
 [RequireComponent(typeof(LineRenderer)),
 RequireComponent(typeof(Rigidbody2D))]
@@ -9,8 +10,8 @@ public class Rope : MonoBehaviour
 {
 	public const int BaseDrawSegmentsCount = 2;
 	public const float LegJointDistance = 0.1f;
-	
-	
+
+	[SerializeField] private Vector3 renderOffset = new Vector3(0, 0, -1);
 	[SerializeField] private Prefab ropeSegmentPrefab;
 
 	[Header("Rope Settings:")]
@@ -113,19 +114,19 @@ public class Rope : MonoBehaviour
 	private void RenderLine()
 	{
 		_lineRenderer.positionCount = _ropeSegments.Count + BaseDrawSegmentsCount;
-			
+
 		_lineRenderer.SetPosition(0,
-			this.transform.position);
+			this.transform.position + renderOffset);
 			
 		for (int i = 0; i < _ropeSegments.Count; i++) 
 		{
 			_lineRenderer.SetPosition(i + 1,
-				_ropeSegments[i].transform.position);
+				_ropeSegments[i].transform.position  + renderOffset);
 		}
 
 		_lineRenderer.SetPosition(
 			_ropeSegments.Count + 1,
-			_connectedObject.transform.TransformPoint(_connectedSpringJoint.anchor)
+			_connectedObject.transform.TransformPoint(_connectedSpringJoint.anchor)  + renderOffset
 		);
 	}
 	

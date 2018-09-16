@@ -11,17 +11,24 @@ public class GameManager : MonoBehaviour
         () => { };
 
     [SerializeField] private Transform startPlayerPoint;
+    [SerializeField] private Transform treasureSpawnPoint;
+    
     
     [Header("Player Settings")]
     [SerializeField] private GameObject playerPrefab;
     [SerializeField] private Vector3 startPlayerRotation = new Vector3(0, 0, 180);
     
+    [Header("Treasure")]
+    [SerializeField] private GameObject treasurePrefab;
+    
     [Header("Game Settings:")]
     [SerializeField] private float showEndGamePopupDelay = 2f;
+    [SerializeField] private float showGameWonPopupDelay = 1f;
     
     public bool IsGame { get; private set; }
 
     private Player _player;
+    private Treasure _treasure;
     
     private UiManager _uiManager;
     
@@ -66,10 +73,12 @@ public class GameManager : MonoBehaviour
     private void ResetGame()
     {
         CreatePlayer();
+        CreateTreasure();
         
         ChangePlayerState(PlayerStates.Waiting);
         OnGameReset();
     }
+    
 
     private void CreatePlayer()
     {
@@ -97,15 +106,46 @@ public class GameManager : MonoBehaviour
         _player.DestroyPlayer();
     }
 
+    private void FastRemovePlayer()
+    {
+        if (_player == null)
+            return;
+        Destroy(_player.gameObject);
+    }
+    
+
     private void SetRopeBinding()
     {
         _rope.SetConnectedObject(_player.footRope);
         _rope.ResetLength();
     }
+    
+    
+    private void CreateTreasure()
+    {
+        if (_treasure != null)
+        {
+            RemoveCurrentTreasure();
+        }
+        
+        var treasureGo = Instantiate(
+            treasurePrefab,
+            treasureSpawnPoint);
+
+        _treasure = treasureGo.GetComponent<Treasure>();
+        _treasure.Picked += () => _player.holdingTreasure = true;
+    }
+
+    private void RemoveCurrentTreasure()
+    {
+        Destroy(_treasure.gameObject);
+    }
 
 
     public void EndGame()
     {
+        IsGame = false;
+        
         RemoveCurrentPlayer();
         _rope.CutRope();
 
@@ -113,6 +153,16 @@ public class GameManager : MonoBehaviour
         {
             _uiManager.EndGamePopup.Show();
         });
+    }
+
+
+    public void GameWon()
+    {
+        IsGame = false;
+
+        _uiManager.GameWonPopup.Show();
+        
+        MakeAfterDelay(showGameWonPopupDelay, FastRemovePlayer);
     }
 
 

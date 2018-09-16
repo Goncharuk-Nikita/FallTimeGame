@@ -43,7 +43,7 @@ public class Player : PlayerMotor
 		}
 	}
 
-	public bool HoldingTreasure { get; private set; }
+	public bool holdingTreasure { get; set; }
 
 	
 	private BodyPart[] _bodyParts;
@@ -89,7 +89,7 @@ public class Player : PlayerMotor
 
 	public void DestroyPlayer()
 	{
-		IsAlive = HoldingTreasure = false;
+		IsAlive = holdingTreasure = false;
 
 		foreach (var part in _bodyParts)
 		{

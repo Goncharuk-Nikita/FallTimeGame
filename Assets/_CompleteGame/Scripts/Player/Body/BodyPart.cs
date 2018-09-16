@@ -19,9 +19,8 @@ public class BodyPart : Damageble
 	private Damageble _damageble;
 
 	private Joint2D[] _joints;
-	private Rigidbody2D[]  _bodies;
-	private Collider2D[]  _colliders;
-	
+
+	public Rigidbody2D Body { get { return _body; } }
 
 	private void Start()
 	{
@@ -29,8 +28,6 @@ public class BodyPart : Damageble
 		_body = GetComponent<Rigidbody2D>();
 		
 		_joints = GetComponentsInChildren<Joint2D>();
-		_bodies = GetComponentsInChildren<Rigidbody2D>();
-		_colliders = GetComponentsInChildren<Collider2D>();
 		
 		this.UpdateAsObservable()
 			.Where((unit, i) => _detached && _body.IsSleeping())
@@ -56,17 +53,7 @@ public class BodyPart : Damageble
 	
 	private void DestroyBodyPart(Unit unit)
 	{
-		foreach (var body in _bodies) 
-		{
-			Destroy (body);
-		}
-		
-		foreach (var col in _colliders) 
-		{
-			Destroy (col);
-		}
-		
-		Destroy (this);
+		Destroy (this.gameObject);
 	}
 	
 	private void ApplyDamageEffects(DamageInfo damageInfo) 
