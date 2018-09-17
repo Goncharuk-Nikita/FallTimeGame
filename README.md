@@ -1,5 +1,10 @@
 # FallTimeGame
 
+Резюме jobs.tut.by ссылка: https://jobs.tut.by/applicant/resumes/view?resume=5502fdddff04388e250039ed1f3755766d7976
+
+Затраченное на проект время: 21 час.
+Подробнее смотрите в Google Doc ссылка: https://docs.google.com/spreadsheets/d/1LO0fbMPVsmha0xtcuYZ1ADOH1g7YSmUXt1FpCZtQ_7k/edit#gid=0
+
 Описание проекта:
 
 Версия Unity: 2018.2.6f1
