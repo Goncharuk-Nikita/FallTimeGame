@@ -10,7 +10,6 @@ public class Fireball : Enemy, IPoolableComponent
 {
 	[Header("Shot Settings:")]
 	[SerializeField] private float fireballSpeed = 1f;
-	[SerializeField] private float delayToDestroy = 6f;
 	
 	[Space]
 	[SerializeField] private GameObject destroyParticle;
