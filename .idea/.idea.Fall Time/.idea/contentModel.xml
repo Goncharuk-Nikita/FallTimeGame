@@ -233,21 +233,6 @@
             </e>
           </e>
           <e p="UniRx" t="Include">
-            <e p="Examples" t="Include">
-              <e p="Sample01_ObservableWWW.cs" t="Include" />
-              <e p="Sample02_ObservableTriggers.cs" t="Include" />
-              <e p="Sample03_GameObjectAsObservable.cs" t="Include" />
-              <e p="Sample04_ConvertFromUnityCallback.cs" t="Include" />
-              <e p="Sample05_ConvertFromCoroutine.cs" t="Include" />
-              <e p="Sample06_ConvertToCoroutine.cs" t="Include" />
-              <e p="Sample07_OrchestratIEnumerator.cs" t="Include" />
-              <e p="Sample08_DetectDoubleClick.cs" t="Include" />
-              <e p="Sample09_EventHandling.cs" t="Include" />
-              <e p="Sample10_MainThreadDispatcher.cs" t="Include" />
-              <e p="Sample11_Logger.cs" t="Include" />
-              <e p="Sample12_ReactiveProperty.cs" t="Include" />
-              <e p="Sample13_ToDoApp.cs" t="Include" />
-            </e>
             <e p="readme.txt" t="Include" />
             <e p="Scripts" t="Include">
               <e p="Async" t="Include">
@@ -620,55 +605,6 @@
                     <e p="MpmWindow.cs" t="Include" />
                   </e>
                   <e p="MpmSettingsInstaller.cs" t="Include" />
-                </e>
-              </e>
-              <e p="SampleGame1 (Beginner)" t="Include">
-                <e p="Media" t="Include">
-                  <e p="Fonts" t="Include">
-                    <e p="Space.txt" t="Include" />
-                  </e>
-                  <e p="Imported" t="Include">
-                    <e p="Shaders" t="Include">
-                      <e p="Add_Layer.shader" t="Include" />
-                      <e p="AddSmooth_Layer.shader" t="Include" />
-                      <e p="Particle Alpha Blend_IgnoreFog.shader" t="Include" />
-                    </e>
-                  </e>
-                </e>
-                <e p="Scripts" t="Include">
-                  <e p="Asteroid" t="Include">
-                    <e p="Asteroid.cs" t="Include" />
-                    <e p="AsteroidManager.cs" t="Include" />
-                  </e>
-                  <e p="Installers" t="Include">
-                    <e p="GameInstaller.cs" t="Include" />
-                    <e p="GameSettingsInstaller.cs" t="Include" />
-                  </e>
-                  <e p="Main" t="Include">
-                    <e p="GameController.cs" t="Include" />
-                  </e>
-                  <e p="Misc" t="Include">
-                    <e p="AudioHandler.cs" t="Include" />
-                    <e p="GuiHandler.cs" t="Include" />
-                    <e p="LevelHelper.cs" t="Include" />
-                    <e p="TilingBackground.cs" t="Include" />
-                  </e>
-                  <e p="Ship" t="Include">
-                    <e p="Ship.cs" t="Include" />
-                    <e p="ShipStateFactory.cs" t="Include" />
-                    <e p="States" t="Include">
-                      <e p="BrokenShipFactory.cs" t="Include" />
-                      <e p="ExplosionFactory.cs" t="Include" />
-                      <e p="ShipState.cs" t="Include" />
-                      <e p="ShipStateDead.cs" t="Include" />
-                      <e p="ShipStateMoving.cs" t="Include" />
-                      <e p="ShipStateWaitingToStart.cs" t="Include" />
-                    </e>
-                  </e>
-                  <e p="Util" t="Include">
-                    <e p="GameEvents.cs" t="Include" />
-                    <e p="UnityExtensionMethods.cs" t="Include" />
-                  </e>
                 </e>
               </e>
               <e p="SampleGame2 (Advanced)" t="Include">
@@ -1134,7 +1070,6 @@
       <e p="UniRx.Async.csproj" t="IncludeRecursive" />
       <e p="UniRx.Async.Editor.csproj" t="IncludeRecursive" />
       <e p="UniRx.csproj" t="IncludeRecursive" />
-      <e p="UniRx.Examples.csproj" t="IncludeRecursive" />
       <e p="Zenject-Editor.csproj" t="IncludeRecursive" />
       <e p="Zenject-PoolMonitor-Editor.csproj" t="IncludeRecursive" />
       <e p="Zenject-TestFramework-Editor.csproj" t="IncludeRecursive" />

@@ -33,11 +33,14 @@ public class Fireball : Enemy, IPoolableComponent
 	public void Spawned()
 	{
 		DamagedApplied += DestroyBall;
+		
 	}
 	
 	public void Despawned()
 	{
 		DamagedApplied -= DestroyBall;
+		StopAllCoroutines();
+		ResetEnemy();
 	}
 	
 	
@@ -46,11 +49,6 @@ public class Fireball : Enemy, IPoolableComponent
 		transform.Translate(direction * fireballSpeed * Time.deltaTime);
 	}
 
-	private IEnumerator DestroyBallDelay()
-	{
-		yield return new WaitForSeconds(delayToDestroy);
-		DestroyBall();
-	}
 
 	private void DestroyBall()
 	{	

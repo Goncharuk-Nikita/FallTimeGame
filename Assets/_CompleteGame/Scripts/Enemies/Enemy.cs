@@ -32,6 +32,11 @@ public abstract class Enemy : MonoBehaviour
 		CreateTrigger();
 	}
 
+	public void ResetEnemy()
+	{
+		_elapsedTime = damageDelay;
+	}
+
 	private void CreateTrigger()
 	{
 		IObservable<Damageble> triggerStream;
@@ -53,7 +58,8 @@ public abstract class Enemy : MonoBehaviour
 		}
 		
 		triggerStream
-			.Where((damageble, i) => damageble != null)
+			.Where((damageble, i) => damageble != null
+			                         && gameObject.activeSelf)
 			.Subscribe(Damage);
 	}
 

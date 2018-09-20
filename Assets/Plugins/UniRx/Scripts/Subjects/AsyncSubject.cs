@@ -1,7 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using UniRx.InternalUtil;
-
 #if (NET_4_6 || NET_STANDARD_2_0)
 using System.Runtime.CompilerServices;
 using System.Threading;
@@ -98,8 +97,8 @@ namespace UniRx
                 ThrowIfDisposed();
                 if (isStopped) return;
 
-                this.hasValue = true;
-                this.lastValue = value;
+                hasValue = true;
+                lastValue = value;
             }
         }
 
@@ -107,9 +106,9 @@ namespace UniRx
         {
             if (observer == null) throw new ArgumentNullException("observer");
 
-            var ex = default(Exception);
-            var v = default(T);
-            var hv = false;
+            Exception ex;
+            T v;
+            bool hv;
 
             lock (observerLock)
             {
@@ -180,38 +179,38 @@ namespace UniRx
             return false;
         }
 
-        class Subscription : IDisposable
+        private class Subscription : IDisposable
         {
-            readonly object gate = new object();
-            AsyncSubject<T> parent;
-            IObserver<T> unsubscribeTarget;
+            readonly object _gate = new object();
+            AsyncSubject<T> _parent;
+            IObserver<T> _unsubscribeTarget;
 
             public Subscription(AsyncSubject<T> parent, IObserver<T> unsubscribeTarget)
             {
-                this.parent = parent;
-                this.unsubscribeTarget = unsubscribeTarget;
+                this._parent = parent;
+                this._unsubscribeTarget = unsubscribeTarget;
             }
 
             public void Dispose()
             {
-                lock (gate)
+                lock (_gate)
                 {
-                    if (parent != null)
+                    if (_parent != null)
                     {
-                        lock (parent.observerLock)
+                        lock (_parent.observerLock)
                         {
-                            var listObserver = parent.outObserver as ListObserver<T>;
+                            var listObserver = _parent.outObserver as ListObserver<T>;
                             if (listObserver != null)
                             {
-                                parent.outObserver = listObserver.Remove(unsubscribeTarget);
+                                _parent.outObserver = listObserver.Remove(_unsubscribeTarget);
                             }
                             else
                             {
-                                parent.outObserver = EmptyObserver<T>.Instance;
+                                _parent.outObserver = EmptyObserver<T>.Instance;
                             }
 
-                            unsubscribeTarget = null;
-                            parent = null;
+                            _unsubscribeTarget = null;
+                            _parent = null;
                         }
                     }
                 }
@@ -248,7 +247,7 @@ namespace UniRx
             //
             // [OK] Use of unsafe Subscribe: this type's Subscribe implementation is safe.
             //
-            this.Subscribe/*Unsafe*/(new AwaitObserver(continuation, originalContext));
+            Subscribe/*Unsafe*/(new AwaitObserver(continuation, originalContext));
         }
 
         class AwaitObserver : IObserver<T>
@@ -303,7 +302,7 @@ namespace UniRx
         /// </summary>
         /// <returns>The last element of the subject. Throws an InvalidOperationException if no element was received.</returns>
         /// <exception cref="InvalidOperationException">The source sequence is empty.</exception>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate", Justification = "Await pattern for C# and VB compilers.")]
+        [SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate", Justification = "Await pattern for C# and VB compilers.")]
         public T GetResult()
         {
             if (!isStopped)

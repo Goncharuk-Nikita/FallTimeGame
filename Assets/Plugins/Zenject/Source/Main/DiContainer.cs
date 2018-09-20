@@ -5,7 +5,7 @@ using System.Linq;
 using ModestTree;
 using ModestTree.Util;
 using Zenject.Internal;
-
+using Object = UnityEngine.Object;
 #if !NOT_UNITY3D
 using UnityEngine;
 #endif
@@ -112,7 +112,7 @@ namespace Zenject
             }
 
             // Assumed to be configured in a parent container
-            var settings = this.TryResolve<ZenjectSettings>();
+            var settings = TryResolve<ZenjectSettings>();
 
             if (settings != null)
             {
@@ -140,7 +140,7 @@ namespace Zenject
             set
             {
                 _settings = value;
-                this.Rebind<ZenjectSettings>().FromInstance(value);
+                Rebind<ZenjectSettings>().FromInstance(value);
             }
         }
 
@@ -169,7 +169,7 @@ namespace Zenject
 
             var result = Activator.CreateInstance(
                 typeof(LazyInject<>)
-                .MakeGenericType(newContext.MemberType), new object[] { this, newContext });
+                .MakeGenericType(newContext.MemberType), this, newContext);
 
             if (_isValidating)
             {
@@ -382,7 +382,7 @@ namespace Zenject
 
             using (var block = DisposeBlock.Spawn())
             {
-                foreach (var bindingId in block.SpawnList<BindingId>(_providers.Keys))
+                foreach (var bindingId in block.SpawnList(_providers.Keys))
                 {
                     if (!bindingId.Type.IsOpenGenericType())
                     {
@@ -452,7 +452,7 @@ namespace Zenject
 
         DiContainer CreateSubContainer(bool isValidating)
         {
-            return new DiContainer(new DiContainer[] { this }, isValidating);
+            return new DiContainer(new[] { this }, isValidating);
         }
 
         public void RegisterProvider(
@@ -678,7 +678,6 @@ namespace Zenject
             if (bindingId.Type.IsGenericType() && _providers.TryGetValue(new BindingId(bindingId.Type.GetGenericTypeDefinition(), bindingId.Identifier), out localProviders))
             {
                 buffer.AddRange(localProviders);
-                return;
             }
 
             // None found
@@ -825,7 +824,7 @@ namespace Zenject
             _hasDisplayedInstallWarning = true;
 
             // Feel free to comment this out if you are comfortable with this practice
-            ModestTree.Log.Warn("Zenject Warning: It is bad practice to call Inject/Resolve/Instantiate before all the Installers have completed!  This is important to ensure that all bindings have properly been installed in case they are needed when injecting/instantiating/resolving.  Detected when operating on type '{0}'.  If you don't care about this, you can disable this warning by setting flag 'ZenjectSettings.DisplayWarningWhenResolvingDuringInstall' to false (see docs for details on ZenjectSettings).", rootContext.MemberType);
+            Log.Warn("Zenject Warning: It is bad practice to call Inject/Resolve/Instantiate before all the Installers have completed!  This is important to ensure that all bindings have properly been installed in case they are needed when injecting/instantiating/resolving.  Detected when operating on type '{0}'.  If you don't care about this, you can disable this warning by setting flag 'ZenjectSettings.DisplayWarningWhenResolvingDuringInstall' to false (see docs for details on ZenjectSettings).", rootContext.MemberType);
 #endif
         }
 
@@ -863,7 +862,7 @@ namespace Zenject
             {
                 throw Assert.CreateException(
                     "Unable to resolve type '{0}'{1}. \nObject graph:\n{2}",
-                    context.MemberType.ToString() + (context.Identifier == null ? "" : " with ID '{0}'".Fmt(context.Identifier.ToString())),
+                    context.MemberType + (context.Identifier == null ? "" : " with ID '{0}'".Fmt(context.Identifier.ToString())),
                     (context.ObjectType == null ? "" : " while building object with type '{0}'".Fmt(context.ObjectType)),
                     context.GetObjectGraphString());
             }
@@ -905,7 +904,7 @@ namespace Zenject
                         .Where(x => x != null).ToList();
                 }
 
-                return new List<Type> {};
+                return new List<Type>();
             }
         }
 
@@ -995,11 +994,11 @@ namespace Zenject
                 }
 
                 throw Assert.CreateException("Unable to resolve type '{0}'{1}. \nObject graph:\n{2}",
-                    memberType.ToString() + (context.Identifier == null ? "" : " with ID '{0}'".Fmt(context.Identifier.ToString())),
+                    memberType + (context.Identifier == null ? "" : " with ID '{0}'".Fmt(context.Identifier.ToString())),
                     (context.ObjectType == null ? "" : " while building object with type '{0}'".Fmt(context.ObjectType)),
                     context.GetObjectGraphString());
             }
-            else
+
             {
                 var instances = SafeGetInstances(providerInfo, context);
 
@@ -1012,7 +1011,7 @@ namespace Zenject
 
                     throw Assert.CreateException(
                         "Unable to resolve type '{0}'{1}. \nObject graph:\n{2}",
-                        memberType.ToString() + (context.Identifier == null
+                        memberType + (context.Identifier == null
                             ? ""
                             : " with ID '{0}'".Fmt(context.Identifier.ToString())),
                         (context.ObjectType == null
@@ -1025,7 +1024,7 @@ namespace Zenject
                 {
                     throw Assert.CreateException(
                         "Provider returned multiple instances when only one was expected!  While resolving type '{0}'{1}. \nObject graph:\n{2}",
-                        memberType.ToString() + (context.Identifier == null
+                        memberType + (context.Identifier == null
                             ? ""
                             : " with ID '{0}'".Fmt(context.Identifier.ToString())),
                         (context.ObjectType == null
@@ -1092,10 +1091,8 @@ namespace Zenject
                     }
                 }
             }
-            else
-            {
-                return GetDecoratedInstances(provider, context);
-            }
+
+            return GetDecoratedInstances(provider, context);
         }
 
         public DecoratorToChoiceFromBinder<TContract> Decorate<TContract>()
@@ -1185,7 +1182,7 @@ namespace Zenject
         object InstantiateInternal(Type concreteType, bool autoInject, InjectArgs args)
         {
 #if !NOT_UNITY3D
-            Assert.That(!concreteType.DerivesFrom<UnityEngine.Component>(),
+            Assert.That(!concreteType.DerivesFrom<Component>(),
                 "Error occurred while instantiating object of type '{0}'. Instantiator should not be used to create new mono behaviours.  Must use InstantiatePrefabForComponent, InstantiatePrefab, or InstantiateComponent.", concreteType);
 #endif
 
@@ -1313,10 +1310,10 @@ namespace Zenject
             InjectExplicit(
                 injectable,
                 injectableType,
-                new InjectArgs()
+                new InjectArgs
                 {
                     ExtraArgs = extraArgs,
-                    Context = new InjectContext(this, injectableType, null),
+                    Context = new InjectContext(this, injectableType, null)
                 });
         }
 
@@ -1348,7 +1345,7 @@ namespace Zenject
                     }
                     catch (Exception e)
                     {
-                        ModestTree.Log.ErrorException(e);
+                        Log.ErrorException(e);
                     }
                 }
             }
@@ -1527,7 +1524,7 @@ namespace Zenject
             return CreateAndParentPrefab(prefab, gameObjectBindInfo, context, out shouldMakeActive);
         }
 
-        GameObject GetPrefabAsGameObject(UnityEngine.Object prefab)
+        GameObject GetPrefabAsGameObject(Object prefab)
         {
             if (prefab is GameObject)
             {
@@ -1542,7 +1539,7 @@ namespace Zenject
         // You probably want to use InstantiatePrefab instead
         // This one will only create the prefab and will not inject into it
         internal GameObject CreateAndParentPrefab(
-            UnityEngine.Object prefab, GameObjectCreationParameters gameObjectBindInfo,
+            Object prefab, GameObjectCreationParameters gameObjectBindInfo,
             InjectContext context, out bool shouldMakeActive)
         {
             Assert.That(prefab != null, "Null prefab found when instantiating game object");
@@ -1586,22 +1583,22 @@ namespace Zenject
             GameObject gameObj;
             if(gameObjectBindInfo.Position.HasValue && gameObjectBindInfo.Rotation.HasValue)
             {
-                gameObj = (GameObject)GameObject.Instantiate(
+                gameObj = GameObject.Instantiate(
                     prefabAsGameObject, gameObjectBindInfo.Position.Value,gameObjectBindInfo.Rotation.Value, initialParent);
             }
             else if (gameObjectBindInfo.Position.HasValue)
             {
-                gameObj = (GameObject)GameObject.Instantiate(
+                gameObj = GameObject.Instantiate(
                     prefabAsGameObject, gameObjectBindInfo.Position.Value,prefabAsGameObject.transform.rotation, initialParent);
             }
             else if (gameObjectBindInfo.Rotation.HasValue)
             {
-                gameObj = (GameObject)GameObject.Instantiate(
+                gameObj = GameObject.Instantiate(
                     prefabAsGameObject, prefabAsGameObject.transform.position, gameObjectBindInfo.Rotation.Value, initialParent);
             }
             else
             {
-                gameObj = (GameObject)GameObject.Instantiate(prefabAsGameObject, initialParent);
+                gameObj = GameObject.Instantiate(prefabAsGameObject, initialParent);
             }
 
 #if !UNITY_EDITOR
@@ -1636,7 +1633,7 @@ namespace Zenject
 
         public GameObject CreateEmptyGameObject(string name)
         {
-            return CreateEmptyGameObject(new GameObjectCreationParameters() { Name = name }, null);
+            return CreateEmptyGameObject(new GameObjectCreationParameters { Name = name }, null);
         }
 
         public GameObject CreateEmptyGameObject(
@@ -1686,10 +1683,10 @@ namespace Zenject
 
                 if (context == null)
                 {
-                    context = new InjectContext()
+                    context = new InjectContext
                     {
                         // This is the only information we can supply in this case
-                        Container = this,
+                        Container = this
                     };
                 }
 
@@ -1853,25 +1850,25 @@ namespace Zenject
         }
 
         // Create a new game object from a prefab and fill in dependencies for all children
-        public GameObject InstantiatePrefab(UnityEngine.Object prefab)
+        public GameObject InstantiatePrefab(Object prefab)
         {
             return InstantiatePrefab(
                 prefab, GameObjectCreationParameters.Default);
         }
 
         // Create a new game object from a prefab and fill in dependencies for all children
-        public GameObject InstantiatePrefab(UnityEngine.Object prefab, Transform parentTransform)
+        public GameObject InstantiatePrefab(Object prefab, Transform parentTransform)
         {
             return InstantiatePrefab(
-                prefab, new GameObjectCreationParameters() { ParentTransform = parentTransform });
+                prefab, new GameObjectCreationParameters { ParentTransform = parentTransform });
         }
 
         // Create a new game object from a prefab and fill in dependencies for all children
         public GameObject InstantiatePrefab(
-            UnityEngine.Object prefab, Vector3 position, Quaternion rotation, Transform parentTransform)
+            Object prefab, Vector3 position, Quaternion rotation, Transform parentTransform)
         {
             return InstantiatePrefab(
-                prefab, new GameObjectCreationParameters()
+                prefab, new GameObjectCreationParameters
                 {
                     ParentTransform = parentTransform,
                     Position = position,
@@ -1881,7 +1878,7 @@ namespace Zenject
 
         // Create a new game object from a prefab and fill in dependencies for all children
         public GameObject InstantiatePrefab(
-            UnityEngine.Object prefab, GameObjectCreationParameters gameObjectBindInfo)
+            Object prefab, GameObjectCreationParameters gameObjectBindInfo)
         {
             FlushBindings();
 
@@ -1908,7 +1905,7 @@ namespace Zenject
         // Create a new game object from a resource path and fill in dependencies for all children
         public GameObject InstantiatePrefabResource(string resourcePath, Transform parentTransform)
         {
-            return InstantiatePrefabResource(resourcePath, new GameObjectCreationParameters() { ParentTransform = parentTransform });
+            return InstantiatePrefabResource(resourcePath, new GameObjectCreationParameters { ParentTransform = parentTransform });
         }
 
         public GameObject InstantiatePrefabResource(
@@ -1937,7 +1934,7 @@ namespace Zenject
 
         // Same as InstantiatePrefab but returns a component after it's initialized
         // and optionally allows extra arguments for the given component type
-        public T InstantiatePrefabForComponent<T>(UnityEngine.Object prefab)
+        public T InstantiatePrefabForComponent<T>(Object prefab)
         {
             return (T)InstantiatePrefabForComponent(
                 typeof(T), prefab, null, new object[0]);
@@ -1948,14 +1945,14 @@ namespace Zenject
         // Note: For IL2CPP platforms make sure to use new object[] instead of new [] when creating
         // the argument list to avoid errors converting to IEnumerable<object>
         public T InstantiatePrefabForComponent<T>(
-            UnityEngine.Object prefab, IEnumerable<object> extraArgs)
+            Object prefab, IEnumerable<object> extraArgs)
         {
             return (T)InstantiatePrefabForComponent(
                 typeof(T), prefab, null, extraArgs);
         }
 
         public T InstantiatePrefabForComponent<T>(
-            UnityEngine.Object prefab, Transform parentTransform)
+            Object prefab, Transform parentTransform)
         {
             return (T)InstantiatePrefabForComponent(
                 typeof(T), prefab, parentTransform, new object[0]);
@@ -1964,14 +1961,14 @@ namespace Zenject
         // Note: For IL2CPP platforms make sure to use new object[] instead of new [] when creating
         // the argument list to avoid errors converting to IEnumerable<object>
         public T InstantiatePrefabForComponent<T>(
-            UnityEngine.Object prefab, Transform parentTransform, IEnumerable<object> extraArgs)
+            Object prefab, Transform parentTransform, IEnumerable<object> extraArgs)
         {
             return (T)InstantiatePrefabForComponent(
                 typeof(T), prefab, parentTransform, extraArgs);
         }
 
         public T InstantiatePrefabForComponent<T>(
-            UnityEngine.Object prefab, Vector3 position, Quaternion rotation, Transform parentTransform)
+            Object prefab, Vector3 position, Quaternion rotation, Transform parentTransform)
         {
             return (T)InstantiatePrefabForComponent(
                 typeof(T), prefab, new object[0], new GameObjectCreationParameters
@@ -1983,7 +1980,7 @@ namespace Zenject
         }
 
         public T InstantiatePrefabForComponent<T>(
-            UnityEngine.Object prefab, Vector3 position, Quaternion rotation, Transform parentTransform, IEnumerable<object> extraArgs)
+            Object prefab, Vector3 position, Quaternion rotation, Transform parentTransform, IEnumerable<object> extraArgs)
         {
             return (T)InstantiatePrefabForComponent(
                 typeof(T), prefab, extraArgs, new GameObjectCreationParameters
@@ -1999,18 +1996,18 @@ namespace Zenject
         // Note: For IL2CPP platforms make sure to use new object[] instead of new [] when creating
         // the argument list to avoid errors converting to IEnumerable<object>
         public object InstantiatePrefabForComponent(
-            Type concreteType, UnityEngine.Object prefab,
+            Type concreteType, Object prefab,
             Transform parentTransform, IEnumerable<object> extraArgs)
         {
             return InstantiatePrefabForComponent(
                 concreteType, prefab, extraArgs,
-                new GameObjectCreationParameters() { ParentTransform = parentTransform });
+                new GameObjectCreationParameters { ParentTransform = parentTransform });
         }
 
         // Note: For IL2CPP platforms make sure to use new object[] instead of new [] when creating
         // the argument list to avoid errors converting to IEnumerable<object>
         public object InstantiatePrefabForComponent(
-            Type concreteType, UnityEngine.Object prefab,
+            Type concreteType, Object prefab,
             IEnumerable<object> extraArgs, GameObjectCreationParameters creationInfo)
         {
             return InstantiatePrefabForComponentExplicit(
@@ -2087,7 +2084,7 @@ namespace Zenject
             return InstantiatePrefabResourceForComponentExplicit(
                 concreteType, resourcePath,
                 InjectUtil.CreateArgList(extraArgs),
-                new GameObjectCreationParameters() { ParentTransform = parentTransform });
+                new GameObjectCreationParameters { ParentTransform = parentTransform });
         }
 
         public T InstantiateScriptableObjectResource<T>(string resourcePath)
@@ -2169,10 +2166,10 @@ namespace Zenject
         {
             return InjectGameObjectForComponentExplicit(
                 gameObject, componentType,
-                new InjectArgs()
+                new InjectArgs
                 {
                     ExtraArgs = InjectUtil.CreateArgList(extraArgs),
-                    Context = new InjectContext(this, componentType, null),
+                    Context = new InjectContext(this, componentType, null)
                 });
         }
 
@@ -2766,7 +2763,7 @@ namespace Zenject
             where TPoolConcrete : TPoolContract, IMemoryPool
             where TPoolContract : IMemoryPool
         {
-            var contractTypes = new List<Type>() { typeof(IDisposable), typeof(TPoolContract) };
+            var contractTypes = new List<Type> { typeof(IDisposable), typeof(TPoolContract) };
 
             if (includeConcreteType)
             {
@@ -3057,26 +3054,26 @@ namespace Zenject
         }
 
 #if NET_4_6
-        public System.Lazy<T> InstantiateLazy<T>()
+        public Lazy<T> InstantiateLazy<T>()
         {
             return InstantiateLazy<T>(typeof(T));
         }
 
-        public System.Lazy<T> InstantiateLazy<T>(Type concreteType)
+        public Lazy<T> InstantiateLazy<T>(Type concreteType)
         {
             Assert.That(concreteType.DerivesFromOrEqual<T>());
-            return new System.Lazy<T>(() => (T)this.Instantiate(concreteType));
+            return new Lazy<T>(() => (T)Instantiate(concreteType));
         }
 
-        public System.Lazy<T> ResolveLazy<T>()
+        public Lazy<T> ResolveLazy<T>()
         {
             return ResolveLazy<T>(typeof(T));
         }
 
-        public System.Lazy<T> ResolveLazy<T>(Type concreteType)
+        public Lazy<T> ResolveLazy<T>(Type concreteType)
         {
             Assert.That(concreteType.DerivesFromOrEqual<T>());
-            return new System.Lazy<T>(() => (T)this.Resolve(concreteType));
+            return new Lazy<T>(() => (T)Resolve(concreteType));
         }
 #endif
 
@@ -3087,10 +3084,10 @@ namespace Zenject
             return InstantiateExplicit(
                 concreteType,
                 autoInject,
-                new InjectArgs()
+                new InjectArgs
                 {
                     ExtraArgs = extraArgs,
-                    Context = new InjectContext(this, concreteType, null),
+                    Context = new InjectContext(this, concreteType, null)
                 });
         }
 
@@ -3106,25 +3103,21 @@ namespace Zenject
                     {
                         return InstantiateInternal(concreteType, autoInject, args);
                     }
-                    else
+
+                    // In this case, just log it and continue to print out multiple validation errors
+                    // at once
+                    try
                     {
-                        // In this case, just log it and continue to print out multiple validation errors
-                        // at once
-                        try
-                        {
-                            return InstantiateInternal(concreteType, autoInject, args);
-                        }
-                        catch (Exception e)
-                        {
-                            ModestTree.Log.ErrorException(e);
-                            return new ValidationMarker(concreteType, true);
-                        }
+                        return InstantiateInternal(concreteType, autoInject, args);
+                    }
+                    catch (Exception e)
+                    {
+                        Log.ErrorException(e);
+                        return new ValidationMarker(concreteType, true);
                     }
                 }
-                else
-                {
-                    return InstantiateInternal(concreteType, autoInject, args);
-                }
+
+                return InstantiateInternal(concreteType, autoInject, args);
             }
         }
 
@@ -3136,7 +3129,7 @@ namespace Zenject
 
             FlushBindings();
 
-            var monoBehaviour = (Component)gameObject.AddComponent(componentType);
+            var monoBehaviour = gameObject.AddComponent(componentType);
             InjectExplicit(monoBehaviour, extraArgs);
             return monoBehaviour;
         }
@@ -3167,10 +3160,10 @@ namespace Zenject
         {
             return InstantiatePrefabResourceForComponentExplicit(
                 componentType, resourcePath,
-                new InjectArgs()
+                new InjectArgs
                 {
                     ExtraArgs = extraArgs,
-                    Context = new InjectContext(this, componentType, null),
+                    Context = new InjectContext(this, componentType, null)
                 }, creationInfo);
         }
 
@@ -3186,7 +3179,7 @@ namespace Zenject
         }
 
         public object InstantiatePrefabForComponentExplicit(
-            Type componentType, UnityEngine.Object prefab,
+            Type componentType, Object prefab,
             List<TypeValuePair> extraArgs)
         {
             return InstantiatePrefabForComponentExplicit(
@@ -3194,22 +3187,22 @@ namespace Zenject
         }
 
         public object InstantiatePrefabForComponentExplicit(
-            Type componentType, UnityEngine.Object prefab,
+            Type componentType, Object prefab,
             List<TypeValuePair> extraArgs, GameObjectCreationParameters gameObjectBindInfo)
         {
             return InstantiatePrefabForComponentExplicit(
                 componentType, prefab,
-                new InjectArgs()
+                new InjectArgs
                 {
                     ExtraArgs = extraArgs,
-                    Context = new InjectContext(this, componentType, null),
+                    Context = new InjectContext(this, componentType, null)
                 }, gameObjectBindInfo);
         }
 
         // Same as InstantiatePrefabForComponent except allows null values
         // to be included in the argument list.  Also see InjectUtil.CreateArgList
         public object InstantiatePrefabForComponentExplicit(
-            Type componentType, UnityEngine.Object prefab,
+            Type componentType, Object prefab,
             InjectArgs args, GameObjectCreationParameters gameObjectBindInfo)
         {
             Assert.That(!AssertOnNewGameObjects,
@@ -3295,7 +3288,7 @@ namespace Zenject
                 "Expected type '{0}' to derive from ITickable", type);
 
             BindInstance(
-                ModestTree.Util.ValuePair.New(type, order)).WhenInjectedInto<TickableManager>();
+                ValuePair.New(type, order)).WhenInjectedInto<TickableManager>();
         }
 
         public void BindInitializableExecutionOrder<T>(int order)
@@ -3310,7 +3303,7 @@ namespace Zenject
                 "Expected type '{0}' to derive from IInitializable", type);
 
             BindInstance(
-                ModestTree.Util.ValuePair.New(type, order)).WhenInjectedInto<InitializableManager>();
+                ValuePair.New(type, order)).WhenInjectedInto<InitializableManager>();
         }
 
         public void BindDisposableExecutionOrder<T>(int order)
@@ -3331,7 +3324,7 @@ namespace Zenject
                 "Expected type '{0}' to derive from IDisposable", type);
 
             BindInstance(
-                ModestTree.Util.ValuePair.New(type, order)).WhenInjectedInto<DisposableManager>();
+                ValuePair.New(type, order)).WhenInjectedInto<DisposableManager>();
         }
 
         public void BindLateDisposableExecutionOrder(Type type, int order)
@@ -3340,7 +3333,7 @@ namespace Zenject
             "Expected type '{0}' to derive from ILateDisposable", type);
 
             BindInstance(
-                ModestTree.Util.ValuePair.New(type, order)).WithId("Late").WhenInjectedInto<DisposableManager>();
+                ValuePair.New(type, order)).WithId("Late").WhenInjectedInto<DisposableManager>();
         }
 
         public void BindFixedTickableExecutionOrder<T>(int order)
@@ -3354,8 +3347,8 @@ namespace Zenject
             Assert.That(type.DerivesFrom<IFixedTickable>(),
                 "Expected type '{0}' to derive from IFixedTickable", type);
 
-            Bind<ModestTree.Util.ValuePair<Type, int>>().WithId("Fixed")
-                .FromInstance(ModestTree.Util.ValuePair.New(type, order)).WhenInjectedInto<TickableManager>();
+            Bind<ValuePair<Type, int>>().WithId("Fixed")
+                .FromInstance(ValuePair.New(type, order)).WhenInjectedInto<TickableManager>();
         }
 
         public void BindLateTickableExecutionOrder<T>(int order)
@@ -3369,8 +3362,8 @@ namespace Zenject
             Assert.That(type.DerivesFrom<ILateTickable>(),
                 "Expected type '{0}' to derive from ILateTickable", type);
 
-            Bind<ModestTree.Util.ValuePair<Type, int>>().WithId("Late")
-                .FromInstance(ModestTree.Util.ValuePair.New(type, order)).WhenInjectedInto<TickableManager>();
+            Bind<ValuePair<Type, int>>().WithId("Late")
+                .FromInstance(ValuePair.New(type, order)).WhenInjectedInto<TickableManager>();
         }
 
         public void BindPoolableExecutionOrder<T>(int order)
@@ -3384,8 +3377,8 @@ namespace Zenject
             Assert.That(type.DerivesFrom<IPoolable>(),
                 "Expected type '{0}' to derive from IPoolable", type);
 
-            Bind<ModestTree.Util.ValuePair<Type, int>>()
-                .FromInstance(ModestTree.Util.ValuePair.New(type, order)).WhenInjectedInto<PoolableManager>();
+            Bind<ValuePair<Type, int>>()
+                .FromInstance(ValuePair.New(type, order)).WhenInjectedInto<PoolableManager>();
         }
 
         ////////////// Types ////////////////
