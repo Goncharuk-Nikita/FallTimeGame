@@ -1,5 +1,7 @@
 # FallTimeGame
 
+Zip проекта: https://drive.google.com/open?id=17qB36lsoZcsHRTo_7pdPWYFn7V5uk5k0
+
 Резюме jobs.tut.by ссылка: https://jobs.tut.by/applicant/resumes/view?resume=5502fdddff04388e250039ed1f3755766d7976
 
 Затраченное на проект время: 21 час.
