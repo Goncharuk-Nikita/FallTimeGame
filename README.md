@@ -40,3 +40,5 @@ Zip проекта: https://drive.google.com/open?id=17qB36lsoZcsHRTo_7pdPWYFn7V
 Enviroment построен с помощью TileMap системы. 
 
 Для повышения производительности использовалась Pooling система (используется веревкой для создания сегментов)
+
+![Alt Text](https://github.com/Goncharuk-Nikita/FallTimeGame/blob/master/2018-12-31_17-24-41.gif)
